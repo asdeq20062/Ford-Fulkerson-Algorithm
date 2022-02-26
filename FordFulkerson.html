@@ -44,14 +44,22 @@ function dfs(vert, node, current, end, path, visited) {
   visited.push(current);
   for (let i = 0; i < vert.length; i++) {
     // Forward path
-    if (vert[i].from === current && vert[i].residual !== 0 && !visited.includes(vert[i].to)) {
+    if (
+      vert[i].from === current &&
+      vert[i].residual !== 0 &&
+      !visited.includes(vert[i].to)
+    ) {
       isFind = dfs(vert, node, vert[i].to, end, path, visited);
       if (isFind) {
         path.unshift(vert[i]);
         return true;
       }
       // Backward path
-    } else if (rev[i].from === current && rev[i].residual !== 0 && !visited.includes(rev[i].to)) {
+    } else if (
+      rev[i].from === current &&
+      rev[i].residual !== 0 &&
+      !visited.includes(rev[i].to)
+    ) {
       isFind = dfs(vert, node, rev[i].to, end, path, visited);
       if (isFind) {
         path.unshift(rev[i]);
@@ -65,7 +73,7 @@ function dfs(vert, node, current, end, path, visited) {
 
 function fordFulkerson() {
   let path = []; // Initiate the path
-  let visited = [];
+  let visited = []; // Initiate the visisted
   while (dfs(vert, node, start, end, path, visited)) {
     let min = 999999;
     // Find the min residual flow in the flow path
@@ -78,16 +86,18 @@ function fordFulkerson() {
       if (path[i].isRev) {
         rev[path[i].id].residual -= min;
         vert[path[i].id].residual += min;
-        rev[path[i].id].flow += min;
         // Handle forward path
       } else {
         vert[path[i].id].residual -= min;
         rev[path[i].id].residual += min;
-        vert[path[i].id].flow += min;
       }
     }
     path = []; // Reset the path
-    visited = [];
+    visited = []; // Reset the visited
+  }
+  // Calculate flow
+  for(let i = 0; i < vert.length; i++){
+    vert[i].flow = vert[i].capacity - vert[i].residual;
   }
 }
 
